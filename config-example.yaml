@@ -1,0 +1,20 @@
+watchdir: '/tmp/listen'
+dstdir: '/tmp/accepted'
+rejecteddir: '/tmp/rejected'
+slackwebhook: 'https://hooks.slack.com/services/JKDJSLKJFSLKJFNLKSNFLKJNFLKSFS'
+awsaccounts:
+  -
+    name: my-aws
+    id: KJDBFGKJSKJKLGKLJESNFGKLJW
+    secret: kwhjefjhbwkefnwqjenfkjwnfkjwnbfwkjfbwhkbfjwhvf2h4bfwqkjef
+    regions: ["us-east-1","us-west-2","eu-west-1","ap-northeast-1"]
+
+osaccounts:
+  -
+    name: my-os
+    username: 'api-7623874628734'
+    password: 'jkdahwuhwd283y297y34782t83y2kibhwjds'
+    version: '2.0'
+    auth_url: 'https://identity.api.cloud.iweb.com/v2.0'
+    project_name: 'inap-82738273'
+    regions: ['ams01','sjc01','nyj01']
