@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - 1.8
+
+install:
+- go build -o salt-helper *.go
+
+
+deploy:
+  provider: releases
+  api_key: L/Aj2X6JDcJdR2zBNIwlJjS5TWPtrWoxjIf9U8/0GR0yVlelWSqsxvq/Do6dzn3gecqOyN+/yLz/GxMfdkHfL4Pfm/UoTjWCbZFLNHyGtu58OyiAIexrKzS0JH1R5Yp/MJEcc5lDFQjLI4gyB4bsx1dOhnfhURFjok2BDiFmfWB0o8A1PNNO13Kij6fNEGGxgiV+ldRIJKkys/7N+1SD30tKa5SsMZ1uQS7uaFLNeDDBRi6caNVNCvNIE8S2PK7aVaPVx1mAIBVmRq9DbdO4cxlqgYx9nqS/dHF0uoKNpiM4Z3sACIGSjiX62KX4rMVPLcojH5SP1zEW8t1B6L+htwxavT766aaK1yskPXiTi5mFkvKGcDtm8qjOtT6kwF/4vL0AQ4wWVrcKqBjuSDw2giRh1qTUjl9TBYcL5QN1R7tlfoQW61NBOmcL2J8gOIhdbvZpkO9YXs+ljpFjOzZlqIpVluEw1az8Uk0pUTqyMKIDeX3eOToBtaliWHrKx58ufwEojfpvt2zyuEBWYwgNuxZlWnu7aFiGWF9D6D/EbY2liSbd1JzzUxVlpLI+JOyDBekUtQ1eC85tp9bBl2U0UpD2a38J6mt+HDhnqAwLnobp8dy3ox3bmF+lZVQoyrC0Fh/kCxg/ERwjh3p3gOMv/XagQVCfT6ZxWVTtd/jXhBs=
+  file: "salt-helper"
+  skip_cleanup: true
+  on:
+    tags: true
