@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Bash3 Boilerplate. http://kvz.io/blog/2013/11/21/bash-best-practices/
+set -o errexit
+set -o pipefail
+set -o nounset
+# set -o xtrace
+
+__command='docker'
+__dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__root=$(dirname $__dir)
+__image="salt-helper"
+${__command} -v >/dev/null 2>&1 || { echo >&2 "I require ${__command} but its not installed.  Aborting."; exit 1; }
+
+cd "$__root"
+${__command} build -q -t ${__image} .
+${__command} run -ti --rm -v "$__root":/go/src/app --name ${__image}-$(( ( RANDOM % 100 )  + 1 )) ${__image} /bin/bash
+
