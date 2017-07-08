@@ -7,14 +7,22 @@ os:
   - linux
   - osx
 
+matrix:
+  include:
+    - os: linux
+      env: DEPLOY_FILE=salt-helper-linux
+    - os: osx
+      env: DEPLOY_FILE=salt-helper-mac
+
+
 script:
-  - "go build -o salt-helper -i ."
+  - "go build -o $DEPLOY_FILE -i ."
 
 deploy:
   provider: releases
   api_key:
     secure: fLOPA3tHHKDQXWhgU//Lvn3aPyFFcSWTFfAj8MFGDVs3s+4MKwdNlZ01/IU+tAsoRk4iuQnwakiUlEGP996bxuThkM9lAAm9ChfCNmUUR1motQiKrN/4y1jf6wTvo3pY8hAcKxD0muYj3MP8nfhq9iZ+Gee178vhfgMxDmOdAbUMKTyEKNISt8ab140pTj72WX2OvCyT+w52ql2WXcawvfm5kSipF4NmgpdCVJp38MoIDrzaB4Mpqx9eazFwR2QAOLXSmc1LAlewJIXWDTm0jSvnBbaJmYBJrHoxMsodpzd2cJ3owCM4U1wD02ToF97fhmbglySp01ciwYie2WsEIXwHTDPkAVLCFCwe0ssTpEN9Yx6tAq72wlGRe1Kg0DwrnFCKbquT4yc89VwWohOvliKQ3+qXRUSfJC7jzIZehAxUtiPSdqqh3UgNjOvV8h9kEzNrM3H6sxgEF4wqrHHOTojUv4Rj90JlBfQB8lHHVWqafhVUP83Nx9SG1kjfn5w7x0vfkqVikbOBK41Wl4yCLxav1uLfkI71HOUqmGWlCPOYfY0s9QSB9CeV4HRShWRh1+EdJ9iCiPyC/C6qBS6DTKjtEjVDAWe5s2U2mCAIapq6nciMumgQ+htjuSORr7bpAa5yFFaQXfdAXNgLUrQ1LEfUyxPBeAdQeIyRs8lF4JU
-  file: "salt-helper"
+  file: "$DEPLOY_FILE"
   skip_cleanup: true
   on:
     tags: true
