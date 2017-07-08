@@ -3,8 +3,8 @@ language: go
 go:
   - 1.8
 
-install:
-- go build -o salt-helper *.go
+# install:
+# - go build -o salt-helper *.go
 
 
 deploy:
