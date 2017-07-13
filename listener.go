@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/fsnotify/fsnotify"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"sync"
@@ -16,7 +16,7 @@ func Listener(config *Config) {
 	}
 	defer watcher.Close()
 
-	log.Printf("Listening dir: %#v\n", config.Watchdir)
+	log.Info("Listening dir ", config.Watchdir)
 
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -29,8 +29,22 @@ func Listener(config *Config) {
 				if event.Op&fsnotify.Create == fsnotify.Create {
 					fullpath := event.Name
 					filename := filepath.Base(fullpath)
-					log.Println("Created file:", filename)
+					log.Info("Created file ", filename)
 
+					if _, err := os.Stat(config.DstDir + "/" + filename); !os.IsNotExist(err) {
+						err := os.Rename(fullpath, config.DstDir+"/"+filename)
+						if err != nil {
+							log.Fatal(err)
+						} else {
+							log.Info("Vm ", filename, " already exists, new key removed")
+							vm := Vm{Name: filename, Region: "None", Account: "None", Id: "None"}
+							log.Info("Rejecting vm from salt ", vm)
+							SendToSlack(config, vm)
+						}
+						break
+					}
+
+					found := false
 					c := make(chan *[]Vm)
 					vms := make([]Vm, 0, 10000)
 
@@ -40,7 +54,6 @@ func Listener(config *Config) {
 					c <- &vms
 					result := <-c
 
-					found := false
 					for _, vm := range *result {
 						if vm.Name == filename {
 							found = true
@@ -48,24 +61,25 @@ func Listener(config *Config) {
 							if err != nil {
 								log.Fatal(err)
 							} else {
-								log.Println("Adding vm to salt", vm)
+								log.Info("Adding vm to salt ", vm)
 								SendToSlack(config, vm)
 							}
 						}
 					}
+
 					if !found {
 						err := os.Rename(fullpath, config.RejectedDir+"/"+filename)
 						if err != nil {
 							log.Fatal(err)
 						} else {
 							vm := Vm{Name: filename, Region: "None", Account: "None", Id: "None"}
-							log.Println("Rejecting vm from salt", vm)
+							log.Info("Rejecting vm from salt ", vm)
 							SendToSlack(config, vm)
 						}
 					}
 				}
 			case err := <-watcher.Errors:
-				log.Printf("error:", err)
+				log.Fatal(err)
 			}
 		}
 	}()

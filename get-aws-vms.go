@@ -5,16 +5,16 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 func GetAwsVms(config *Config, c chan *[]Vm) {
-	log.Println("Init aws")
+	log.Debug("Init aws")
 	vms := <-c
 
 	for _, account := range config.AwsAccounts {
 		for _, region := range account.Regions {
-			log.Println("Get vms from", account.Name, region)
+			log.Debug("Get vms from ", account.Name, region)
 
 			sess := session.New()
 			sess.Config.Credentials = credentials.NewStaticCredentials(account.Id, account.Secret, "")
@@ -31,7 +31,7 @@ func GetAwsVms(config *Config, c chan *[]Vm) {
 			}
 			resp, err := ec2svc.DescribeInstances(params)
 			if err != nil {
-				log.Fatal(err.Error())
+				log.Error(err)
 			}
 
 			for _, reservation := range resp.Reservations {

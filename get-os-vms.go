@@ -5,16 +5,16 @@ import (
 	"github.com/rackspace/gophercloud/openstack"
 	"github.com/rackspace/gophercloud/openstack/compute/v2/servers"
 	"github.com/rackspace/gophercloud/pagination"
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 func GetOsVms(config *Config, c chan *[]Vm) {
-	log.Println("Init os")
+	log.Debug("Init os")
 	vms := <-c
 
 	for _, account := range config.OsAccounts {
 		for _, region := range account.Regions {
-			log.Println("Get vms from", account.Name, region)
+			log.Debug("Get vms from ", account.Name, region)
 
 			authOpts := gophercloud.AuthOptions{
 				IdentityEndpoint: account.Auth_url,
@@ -25,14 +25,14 @@ func GetOsVms(config *Config, c chan *[]Vm) {
 
 			provider, err := openstack.AuthenticatedClient(authOpts)
 			if err != nil {
-				log.Fatal(err)
+				log.Error(err)
 			}
 
 			client, err := openstack.NewComputeV2(provider, gophercloud.EndpointOpts{
 				Region: region,
 			})
 			if err != nil {
-				log.Fatal(err)
+				log.Error(err)
 			}
 
 			opts := servers.ListOpts{}
@@ -52,7 +52,7 @@ func GetOsVms(config *Config, c chan *[]Vm) {
 				return true, nil
 			})
 			if err != nil {
-				log.Fatal(err)
+				log.Error(err)
 			}
 		}
 	}

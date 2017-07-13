@@ -1,9 +1,9 @@
 package main
 
 import (
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"log"
 	"path/filepath"
 )
 
@@ -12,6 +12,9 @@ type Config struct {
 	DstDir       string
 	RejectedDir  string
 	Slackwebhook string
+	Slackchannel string
+	Slackimoji   string
+	Slackbotname string
 	AwsAccounts  []AwsAccounts
 	OsAccounts   []OsAccounts
 }
@@ -32,8 +35,7 @@ type OsAccounts struct {
 }
 
 func GetConfig(filename string) *Config {
-
-	log.Printf("Loading config %#v\n", filename)
+	log.Info("Loading config ", filename)
 	fullpath, _ := filepath.Abs(filename)
 	yamlFile, err := ioutil.ReadFile(fullpath)
 	if err != nil {
@@ -44,7 +46,7 @@ func GetConfig(filename string) *Config {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Config loaded")
+	log.Debug("Config loaded")
 
 	return &config
 

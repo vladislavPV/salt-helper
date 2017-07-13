@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/ashwanthkumar/slack-go-webhook"
-	"log"
+	log "github.com/sirupsen/logrus"
 )
 
 func SendToSlack(config *Config, vm Vm) {
@@ -25,13 +25,13 @@ func SendToSlack(config *Config, vm Vm) {
 
 	payload := slack.Payload{
 		Text:        "",
-		Username:    "Salt bot",
-		Channel:     "@myname",
-		IconEmoji:   ":monkey:",
+		Username:    config.Slackbotname,
+		Channel:     config.Slackchannel,
+		IconEmoji:   config.Slackimoji,
 		Attachments: []slack.Attachment{attachment},
 	}
 	err := slack.Send(webhookUrl, "", payload)
 	if len(err) > 0 {
-		log.Printf("error: %s\n", err)
+		log.Error(err)
 	}
 }
