@@ -1,4 +1,4 @@
-# salt-helper
+# salt-helper. [![Build Status](https://travis-ci.org/vladislavPV/salt-helper.svg?branch=master)](https://travis-ci.org/vladislavPV/salt-helper)
 ### Auto accept salt minions with checks
 
 `salt-helper` is a Go application which runs on the same instance with salt-master and auto accepts minions
