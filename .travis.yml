@@ -7,8 +7,6 @@ matrix:
   include:
     - os: linux
       env: DEPLOY_FILE=salt-helper-linux
-    - os: osx
-      env: DEPLOY_FILE=salt-helper-mac
 
 
 script:
