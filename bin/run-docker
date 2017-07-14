@@ -13,5 +13,5 @@ ${__command} -v >/dev/null 2>&1 || { echo >&2 "I require ${__command} but its no
 
 cd "$__root"
 ${__command} build -q -t ${__image} .
-${__command} run -ti --rm -v "$__root":/go/src/app --name ${__image}-$(( ( RANDOM % 100 )  + 1 )) ${__image} /bin/bash
+${__command} run -ti --rm -v ~/.gitconfig:/root/.gitconfig -v "$__root":/go/src/app --name ${__image}-$(( ( RANDOM % 100 )  + 1 )) ${__image} /bin/entrypoint.sh
 

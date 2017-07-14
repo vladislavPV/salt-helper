@@ -48,6 +48,6 @@ Options:
 
 	done := make(chan bool)
 	go Listener(config)
-	// Scheduler(config)
+	go Scheduler(config)
 	<-done
 }

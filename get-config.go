@@ -15,6 +15,7 @@ type Config struct {
 	Slackchannel string
 	Slackimoji   string
 	Slackbotname string
+	Schedule	 int
 	AwsAccounts  []AwsAccounts
 	OsAccounts   []OsAccounts
 }
