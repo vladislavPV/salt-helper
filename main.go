@@ -18,7 +18,7 @@ func main() {
 	usage := `Salt helper.
 
 Usage:
-  helper [--log-level=<level>] [--config=<path>] [--fastaccept] [--nocleanup]
+  helper [--log-level=<level>] [--config=<path>] [--fastaccept] [--nocleanup] [--noscheduler] [--allow-known]
   helper -h | --help
   helper --version
 
@@ -48,6 +48,8 @@ Options:
 
 	done := make(chan bool)
 	go Listener(config)
-	go Scheduler(config)
+	if !arguments["--noscheduler"].(bool) {
+		go Scheduler(config)
+	}
 	<-done
 }
