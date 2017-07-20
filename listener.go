@@ -8,7 +8,7 @@ import (
 	"sync"
 )
 
-func Listener(config *Config) {
+func Listener(config *Config, fastaccept bool, allowknown bool) {
 
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -31,19 +31,27 @@ func Listener(config *Config) {
 					filename := filepath.Base(fullpath)
 					log.Info("Created file ", filename)
 
-					if _, err := os.Stat(config.DstDir + "/" + filename); !os.IsNotExist(err) {
-						err := os.Rename(fullpath, config.DstDir+"/"+filename)
-						if err != nil {
-							log.Fatal(err)
-						} else {
-							log.Info("Vm ", filename, " already exists, new key removed")
-							vm := Vm{Name: filename, Region: "None", Account: "None", Id: "None"}
-							log.Info("Rejecting vm from salt ", vm)
-							SendToSlack(config, vm)
+					if !allowknown {
+						if _, err := os.Stat(config.DstDir + "/" + filename); !os.IsNotExist(err) {
+							err := os.Remove(fullpath)
+							if err != nil {
+								log.Fatal(err)
+							} else {
+								vm := Vm{Name: filename, Region: "None", Account: "None", Id: "None", Status: "Already exist", Color: "danger"}
+								SendToSlack(config, vm)
+								log.Info("Vm ", filename, " already exists, new key removed")
+							}
+							break
 						}
-						break
 					}
-
+					if fastaccept {
+							err := os.Rename(fullpath, config.DstDir+"/"+filename)
+							if err != nil {
+								log.Fatal(err)
+							} else {
+								log.Info("Adding vm to salt ", filename)
+							}
+					}
 					found := false
 					c := make(chan *[]Vm)
 					vms := make([]Vm, 0, 10000)
@@ -57,22 +65,29 @@ func Listener(config *Config) {
 					for _, vm := range *result {
 						if vm.Name == filename {
 							found = true
-							err := os.Rename(fullpath, config.DstDir+"/"+filename)
-							if err != nil {
-								log.Fatal(err)
-							} else {
-								log.Info("Adding vm to salt ", vm)
-								SendToSlack(config, vm)
+							if !fastaccept {
+								err := os.Rename(fullpath, config.DstDir+"/"+filename)
+								if err != nil {
+									log.Fatal(err)
+								} else {
+									log.Info("Adding vm to salt ", vm)
+								}
 							}
+							vm := Vm{Name: filename, Region: vm.Region, Account: vm.Account, Id: vm.Id, Status: "Added to salt", Color: "good"}
+							SendToSlack(config, vm)
+							log.Info("Check is done for ", filename)
 						}
 					}
 
 					if !found {
+						if fastaccept {
+							fullpath = config.DstDir+"/"+filename
+						}
 						err := os.Rename(fullpath, config.RejectedDir+"/"+filename)
 						if err != nil {
 							log.Fatal(err)
 						} else {
-							vm := Vm{Name: filename, Region: "None", Account: "None", Id: "None"}
+							vm := Vm{Name: filename, Region: "None", Account: "None", Id: "None", Status: "Not found in clouds", Color: "danger"}
 							log.Info("Rejecting vm from salt ", vm)
 							SendToSlack(config, vm)
 						}

@@ -3,13 +3,14 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 	"time"
+	"os"
 )
 type SaltVms struct {
     Up		[]string
     Down	[]string
 }
 
-func Scheduler(config *Config) {
+func Scheduler(config *Config, nocleanup bool) {
 	log.Info("Starting Scheduler ", config.Schedule)
 	for {
 		time.Sleep(time.Duration(config.Schedule) * time.Second)
@@ -39,7 +40,18 @@ func Scheduler(config *Config) {
 				}
 			}
 			if !found {
-				log.Debug("send instance can be removed from salt ",saltVm)
+				if nocleanup {
+					log.Debug("send instance can be removed manualy from salt ",saltVm)
+				}else{
+					err := os.Remove(config.DstDir+"/"+saltVm)
+					if err != nil {
+						log.Fatal(err)
+					}else{
+						log.Debug("Instance ", saltVm, " was removed from salt")
+						vm := Vm{Name: saltVm, Region: "None", Account: "None", Id: "None", Status: "Vm not found in cloud", Color: "warning"}
+						SendToSlack(config, vm)
+					}
+				}
 			}
 		}
 		for _, cloudVm := range *cloudVms {
@@ -47,7 +59,9 @@ func Scheduler(config *Config) {
 			for _, saltVm := range saltVms.Down {
 				if saltVm == cloudVm.Name {
 					found = true
-					log.Debug("send instance is down ",cloudVm)
+					log.Debug("Instance is down ",cloudVm)
+					vm := Vm{Name: cloudVm.Name, Region: cloudVm.Region, Account: cloudVm.Account, Id: cloudVm.Id, Status: "Is down", Color: "warning"}
+					SendToSlack(config, vm)
 				}
 			}
 			for _, saltVm := range saltVms.Up {
@@ -56,7 +70,9 @@ func Scheduler(config *Config) {
 				}
 			}
 			if !found {
-				log.Debug("send instance not registred in salt ",cloudVm)
+				log.Debug("Instance not registred in salt ",cloudVm)
+				vm := Vm{Name: cloudVm.Name, Region: cloudVm.Region, Account: cloudVm.Account, Id: cloudVm.Id, Status: "Not registered in salt", Color: "warning"}
+				SendToSlack(config, vm)
 			}
 		}
 	}

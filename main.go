@@ -12,6 +12,8 @@ type Vm struct {
 	Region  string
 	Account string
 	Id      string
+	Status	string
+	Color	string
 }
 
 func main() {
@@ -47,9 +49,9 @@ Options:
 	config := GetConfig(configPath)
 
 	done := make(chan bool)
-	go Listener(config)
+	go Listener(config, arguments["--fastaccept"].(bool), arguments["--allow-known"].(bool))
 	if !arguments["--noscheduler"].(bool) {
-		go Scheduler(config)
+		go Scheduler(config, arguments["--nocleanup"].(bool))
 	}
 	<-done
 }

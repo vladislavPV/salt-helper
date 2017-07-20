@@ -43,6 +43,8 @@ func GetAwsVms(config *Config, c chan *[]Vm) {
 								region,
 								account.Name,
 								*instance.InstanceId,
+								"None",
+								"None",
 							})
 						}
 					}

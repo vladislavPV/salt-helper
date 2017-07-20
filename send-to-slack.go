@@ -10,18 +10,11 @@ func SendToSlack(config *Config, vm Vm) {
 
 	attachment := slack.Attachment{}
 
-	color := "good"
-	msg := "Accepted in salt"
-	if vm.Account == "None" {
-		color = "danger"
-		msg = "Rejected in salt"
-	}
-
-	attachment.Color = &color
+	attachment.Color = &vm.Color
 	attachment.AddField(slack.Field{Title: "Name", Value: vm.Name, Short: true})
 	attachment.AddField(slack.Field{Title: "Region/Account", Value: vm.Region + "/" + vm.Account, Short: true})
 	attachment.AddField(slack.Field{Title: "ID", Value: vm.Id, Short: true})
-	attachment.AddField(slack.Field{Title: "Status", Value: msg, Short: true})
+	attachment.AddField(slack.Field{Title: "Status", Value: vm.Status, Short: true})
 
 	payload := slack.Payload{
 		Text:        "",

@@ -47,6 +47,8 @@ func GetOsVms(config *Config, c chan *[]Vm) {
 						region,
 						account.Name,
 						server.ID,
+						"None",
+						"None",
 					})
 				}
 				return true, nil
