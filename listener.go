@@ -45,12 +45,12 @@ func Listener(config *Config, fastaccept bool, allowknown bool) {
 						}
 					}
 					if fastaccept {
-							err := os.Rename(fullpath, config.DstDir+"/"+filename)
-							if err != nil {
-								log.Fatal(err)
-							} else {
-								log.Info("Adding vm to salt ", filename)
-							}
+						err := os.Rename(fullpath, config.DstDir+"/"+filename)
+						if err != nil {
+							log.Fatal(err)
+						} else {
+							log.Info("Adding vm to salt ", filename)
+						}
 					}
 					found := false
 					c := make(chan *[]Vm)
@@ -81,7 +81,7 @@ func Listener(config *Config, fastaccept bool, allowknown bool) {
 
 					if !found {
 						if fastaccept {
-							fullpath = config.DstDir+"/"+filename
+							fullpath = config.DstDir + "/" + filename
 						}
 						err := os.Rename(fullpath, config.RejectedDir+"/"+filename)
 						if err != nil {

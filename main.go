@@ -12,8 +12,8 @@ type Vm struct {
 	Region  string
 	Account string
 	Id      string
-	Status	string
-	Color	string
+	Status  string
+	Color   string
 }
 
 func main() {

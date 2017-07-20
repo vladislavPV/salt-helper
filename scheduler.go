@@ -2,12 +2,13 @@ package main
 
 import (
 	log "github.com/sirupsen/logrus"
-	"time"
 	"os"
+	"time"
 )
+
 type SaltVms struct {
-    Up		[]string
-    Down	[]string
+	Up   []string
+	Down []string
 }
 
 func Scheduler(config *Config, nocleanup bool) {
@@ -23,14 +24,14 @@ func Scheduler(config *Config, nocleanup bool) {
 		cloudChan <- &vms
 		cloudVms := <-cloudChan
 
-		log.Debug("Scheduler got cloud vms ",cloudVms)
+		log.Debug("Scheduler got cloud vms ", cloudVms)
 
 		var minions SaltVms
 		c2 := make(chan *SaltVms)
 		go GetSaltVms(c2)
 		c2 <- &minions
 		saltVms := <-c2
-		log.Debug("Scheduler got salt vms ",saltVms)
+		log.Debug("Scheduler got salt vms ", saltVms)
 
 		for _, saltVm := range saltVms.Down {
 			found := false
@@ -41,12 +42,12 @@ func Scheduler(config *Config, nocleanup bool) {
 			}
 			if !found {
 				if nocleanup {
-					log.Debug("send instance can be removed manualy from salt ",saltVm)
-				}else{
-					err := os.Remove(config.DstDir+"/"+saltVm)
+					log.Debug("send instance can be removed manualy from salt ", saltVm)
+				} else {
+					err := os.Remove(config.DstDir + "/" + saltVm)
 					if err != nil {
 						log.Fatal(err)
-					}else{
+					} else {
 						log.Debug("Instance ", saltVm, " was removed from salt")
 						vm := Vm{Name: saltVm, Region: "None", Account: "None", Id: "None", Status: "Vm not found in cloud", Color: "warning"}
 						SendToSlack(config, vm)
@@ -59,7 +60,7 @@ func Scheduler(config *Config, nocleanup bool) {
 			for _, saltVm := range saltVms.Down {
 				if saltVm == cloudVm.Name {
 					found = true
-					log.Debug("Instance is down ",cloudVm)
+					log.Debug("Instance is down ", cloudVm)
 					vm := Vm{Name: cloudVm.Name, Region: cloudVm.Region, Account: cloudVm.Account, Id: cloudVm.Id, Status: "Is down", Color: "warning"}
 					SendToSlack(config, vm)
 				}
@@ -70,7 +71,7 @@ func Scheduler(config *Config, nocleanup bool) {
 				}
 			}
 			if !found {
-				log.Debug("Instance not registred in salt ",cloudVm)
+				log.Debug("Instance not registred in salt ", cloudVm)
 				vm := Vm{Name: cloudVm.Name, Region: cloudVm.Region, Account: cloudVm.Account, Id: cloudVm.Id, Status: "Not registered in salt", Color: "warning"}
 				SendToSlack(config, vm)
 			}
