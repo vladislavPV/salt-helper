@@ -42,7 +42,7 @@ func Scheduler(config *Config, nocleanup bool) {
 			}
 			if !found {
 				if nocleanup {
-					log.Debug("send instance can be removed manualy from salt ", saltVm)
+					log.Debug("Instance, ", saltVm, " can be removed manualy from salt")
 				} else {
 					err := os.Remove(config.DstDir + "/" + saltVm)
 					if err != nil {

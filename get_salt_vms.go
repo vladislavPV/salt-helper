@@ -22,6 +22,6 @@ func GetSaltVms(c chan *SaltVms) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Debug("Out loaded", minions)
+	log.Debug("Salt minions loaded", minions)
 	c <- minions
 }
