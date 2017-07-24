@@ -33,48 +33,45 @@ func Scheduler(config *Config, nocleanup bool) {
 		saltVms := <-c2
 		log.Debug("Scheduler got salt vms ", saltVms)
 
+		LOOP1:
 		for _, saltVm := range saltVms.Down {
-			found := false
 			for _, cloudVm := range *cloudVms {
 				if saltVm == cloudVm.Name {
-					found = true
+					continue LOOP1
 				}
 			}
-			if !found {
-				if nocleanup {
-					log.Debug("Instance, ", saltVm, " can be removed manualy from salt")
+
+			if nocleanup {
+				log.Debug("Instance, ", saltVm, " can be removed manualy from salt")
+			} else {
+				err := os.Remove(config.DstDir + "/" + saltVm)
+				if err != nil {
+					log.Fatal(err)
 				} else {
-					err := os.Remove(config.DstDir + "/" + saltVm)
-					if err != nil {
-						log.Fatal(err)
-					} else {
-						log.Debug("Instance ", saltVm, " was removed from salt")
-						vm := Vm{Name: saltVm, Region: "None", Account: "None", Id: "None", Status: "Vm not found in cloud", Color: "warning"}
-						SendToSlack(config, vm)
-					}
+					log.Debug("Instance ", saltVm, " was removed from salt")
+					vm := Vm{Name: saltVm, Region: "None", Account: "None", Id: "None", Status: "Vm not found in cloud", Color: "warning"}
+					SendToSlack(config, vm)
 				}
 			}
 		}
+		LOOP2:
 		for _, cloudVm := range *cloudVms {
-			found := false
 			for _, saltVm := range saltVms.Down {
 				if saltVm == cloudVm.Name {
-					found = true
 					log.Debug("Instance is down ", cloudVm)
 					vm := Vm{Name: cloudVm.Name, Region: cloudVm.Region, Account: cloudVm.Account, Id: cloudVm.Id, Status: "Is down", Color: "warning"}
 					SendToSlack(config, vm)
+					continue LOOP2
 				}
 			}
 			for _, saltVm := range saltVms.Up {
 				if saltVm == cloudVm.Name {
-					found = true
+					continue LOOP2
 				}
 			}
-			if !found {
-				log.Debug("Instance not registred in salt ", cloudVm)
-				vm := Vm{Name: cloudVm.Name, Region: cloudVm.Region, Account: cloudVm.Account, Id: cloudVm.Id, Status: "Not registered in salt", Color: "warning"}
-				SendToSlack(config, vm)
-			}
+			log.Debug("Instance not registred in salt ", cloudVm)
+			vm := Vm{Name: cloudVm.Name, Region: cloudVm.Region, Account: cloudVm.Account, Id: cloudVm.Id, Status: "Not registered in salt", Color: "warning"}
+			SendToSlack(config, vm)
 		}
 	}
 }
