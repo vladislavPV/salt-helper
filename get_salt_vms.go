@@ -17,10 +17,12 @@ func GetSaltVms(c chan *SaltVms) {
 		"yaml",
 	}
 	out, err := ExecuteCommand(cmd, args)
-
+	if err != nil {
+		log.Error(err)
+	}
 	err = yaml.Unmarshal([]byte(out.Stdout), &minions)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
 	}
 	log.Debug("Salt minions loaded", minions)
 	c <- minions

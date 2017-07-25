@@ -1,11 +1,11 @@
-watchdir: '/tmp/listen'
-dstdir: '/tmp/accepted'
-rejecteddir: '/tmp/rejected'
+watchdir: '/tmp/listen' #defaults to /etc/salt/pki/master/minions_pre/
+dstdir: '/tmp/accepted' #defaults to /etc/salt/pki/master/minions/
+rejecteddir: '/tmp/rejected' #defaults to /etc/salt/pki/master/minions_rejected/
 slackwebhook: 'https://hooks.slack.com/services/JKDJSLKJFSLKJFNLKSNFLKJNFLKSFS'
-slackchannel: '#general'
-slackimoji: ':monkey:'
-slackbotname: 'Salt bot'
-schedule: 10
+slackchannel: '#general' #defaults to #general
+slackimoji: ':monkey:' #defaults to :b:
+slackbotname: 'Salt bot' #defaults to Salt bot
+schedule: 10 #defaults to 300 sec
 awsaccounts:
   -
     name: my-aws

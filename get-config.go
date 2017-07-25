@@ -49,6 +49,29 @@ func GetConfig(filename string) *Config {
 	}
 	log.Debug("Config loaded")
 
-	return &config
+	// some sane defaults
+	if len(config.Watchdir) == 0{
+		config.Watchdir = "/etc/salt/pki/master/minions_pre/"
+	}
+	if len(config.DstDir) == 0 {
+		config.DstDir = "/etc/salt/pki/master/minions/"
+	}
+	if len(config.RejectedDir) == 0 {
+		config.RejectedDir = "/etc/salt/pki/master/minions_rejected/"
+	}
+	if len(config.Slackchannel) == 0 {
+		config.Slackchannel = "#general"
+	}
+	if len(config.Slackimoji) == 0 {
+		config.Slackimoji = ":b:"
+	}
+	if len(config.Slackbotname) == 0 {
+		config.Slackbotname = "Salt Bot"
+	}
+	if config.Schedule == 0 {
+		config.Schedule = 300
+	}
 
+	log.Debug("Config: ", config)
+	return &config
 }
