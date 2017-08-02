@@ -18,6 +18,7 @@ type Config struct {
 	Schedule     int
 	AwsAccounts  []AwsAccounts
 	OsAccounts   []OsAccounts
+	Exclude      []string
 }
 type AwsAccounts struct {
 	Name    string
@@ -50,7 +51,7 @@ func GetConfig(filename string) *Config {
 	log.Debug("Config loaded")
 
 	// some sane defaults
-	if len(config.Watchdir) == 0{
+	if len(config.Watchdir) == 0 {
 		config.Watchdir = "/etc/salt/pki/master/minions_pre/"
 	}
 	if len(config.DstDir) == 0 {

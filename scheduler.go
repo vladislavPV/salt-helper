@@ -3,6 +3,7 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -33,7 +34,7 @@ func Scheduler(config *Config, nocleanup bool) {
 		saltVms := <-c2
 		log.Debug("Scheduler got salt vms ", saltVms)
 
-		LOOP1:
+	LOOP1:
 		for _, saltVm := range saltVms.Down {
 			for _, cloudVm := range *cloudVms {
 				if saltVm == cloudVm.Name {
@@ -54,7 +55,7 @@ func Scheduler(config *Config, nocleanup bool) {
 				}
 			}
 		}
-		LOOP2:
+	LOOP2:
 		for _, cloudVm := range *cloudVms {
 			for _, saltVm := range saltVms.Down {
 				if saltVm == cloudVm.Name {
@@ -67,6 +68,16 @@ func Scheduler(config *Config, nocleanup bool) {
 			for _, saltVm := range saltVms.Up {
 				if saltVm == cloudVm.Name {
 					continue LOOP2
+				} else {
+					log.Debug("Exclusions ", config.Exclude)
+					for _, pattern := range config.Exclude {
+						match, _ := regexp.MatchString(pattern, cloudVm.Name)
+						log.Debug("Check exclude ", cloudVm.Name, " by pattern ", pattern, " match ", match)
+						if match == true {
+							log.Debug("Exclude ", cloudVm.Name, " by pattern ", pattern)
+							continue LOOP2
+						}
+					}
 				}
 			}
 			log.Debug("Instance not registred in salt ", cloudVm)

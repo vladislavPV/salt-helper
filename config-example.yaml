@@ -6,6 +6,7 @@ slackchannel: '#general' #defaults to #general
 slackimoji: ':monkey:' #defaults to :b:
 slackbotname: 'Salt bot' #defaults to Salt bot
 schedule: 10 #defaults to 300 sec
+exclude: [] #empty by default. Used to exclude some minions from slack alerts
 awsaccounts:
   -
     name: my-aws
