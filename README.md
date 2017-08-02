@@ -8,7 +8,7 @@ This allows you to have dynamic infra in multiple clouds. Also helper can keep y
 
 ### Install
 Download binary for linux from https://github.com/vladislavPV/salt-helper/releases
-You can instantiate it by using supervisord, systemd, upstart or any other init system
+You can instantiate it by using supervisord, systemd, upstart or any other init system.
 
 ### Config
 By default config file(config.yaml) should be in the same dir as salt-helper-linux
@@ -20,7 +20,10 @@ Also few other options available
 	--fastaccept			do cloud check after accepting minion. Could be usefull for autoscaled instances
 	--nocleanup     		disable cleanup of dead salt minions
 	--noscheduler   		disable scheduled checks. will not send you if minion is down
-	--allow-known   		force accept minions already in existing in salt. Could be usefull for autoscaled instances
+	--allow-known   		force accept minions already existing in salt. Could be usefull for autoscaled instances
+
+
+NOTE!	In Aws your ApiKey should be able to read ec2 metadata, so in IAM you have to allow DescribeInstances.
 
 ### Run
 ```
